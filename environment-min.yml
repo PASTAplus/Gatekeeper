@@ -1,0 +1,13 @@
+name: gatekeeper
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - fastapi
+  - httpx
+  - daiquiri
+  - uvicorn
+  - black
+  - pytest
+prefix: /home/pasta/miniconda3/envs/gatekeeper
