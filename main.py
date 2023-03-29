@@ -21,6 +21,8 @@ import uvicorn
 from starlette.staticfiles import StaticFiles
 
 from views import index
+from filter import package
+from filter import audit
 
 
 cwd = os.path.dirname(os.path.realpath(__file__))
@@ -40,6 +42,8 @@ def configure(dev_mode: bool):
 def configure_routes():
     app.mount('/static', StaticFiles(directory='static'), name='static')
     app.include_router(index.router)
+    app.include_router(package.router)
+    app.include_router(audit.router)
 
 
 if __name__ == "__main__":
