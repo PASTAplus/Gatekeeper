@@ -3,11 +3,13 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python=3.11
-  - fastapi
-  - httpx
   - daiquiri
   - uvicorn
-  - black
+  - python=3.11
   - pytest
+  - httpx
+  - black
+  - fastapi
+  - pendulum
+  - pycryptodome
 prefix: /home/pasta/miniconda3/envs/gatekeeper
