@@ -17,13 +17,14 @@ import base64
 import daiquiri
 import pendulum
 
+from auth.pasta_crypto import create_authtoken
 from config import Config
 
 
 logger = daiquiri.getLogger("pasta_token: " + __name__)
 
 
-class PastaToken(object):
+class PastaToken:
     def __init__(self):
         self._token = {
             "uid": "",
@@ -69,7 +70,7 @@ class PastaToken(object):
     def uid(self, uid: str):
         self._token["uid"] = uid
 
-    def to_b64(self):
+    def to_b64(self) -> bytes:
         return base64.b64encode(self.to_string().encode("utf-8"))
 
     def from_b64(self, t_b64: str):
@@ -88,7 +89,7 @@ class PastaToken(object):
         self._token["uid"] = token[0]
         self._token["system"] = token[1]
         self._token["ttl"] = token[2]
-        self._token["groups"] = token[3]
+        self._token["groups"] = "*".join(token[3:])
 
     def is_valid_ttl(self) -> bool:
         now = int(pendulum.now().timestamp() * 1000)
