@@ -23,6 +23,7 @@ from auth.exceptions import AuthenticationException, ExpiredTokenException, Inva
 from auth.pasta_crypto import create_authtoken
 from auth.pasta_token import PastaToken
 from config import Config
+from filter.bot_matcher import robot_name
 from filter.paths import clean_path
 
 router = fastapi.APIRouter()
@@ -42,6 +43,9 @@ async def package_get(request: Request, path: str):
 
     headers = request.headers.items()
     headers.append(("cookie", cookie))
+    user_agent = request.headers.get("User-Agent")
+    if robot_name(user_agent) is not None:
+        headers.append(("Robot", user_agent))
     req = client.build_request("GET", clean_path(path), headers=headers)
     resp = await client.send(req, stream=True)
 
@@ -70,6 +74,9 @@ async def package_post(request: Request, path: str):
 
     headers = request.headers.items()
     headers.append(("cookie", cookie))
+    user_agent = request.headers.get("User-Agent")
+    if robot_name(user_agent) is not None:
+        headers.append(("Robot", user_agent))
     body = await request.body()
     content = body.decode("utf-8")
     req = client.build_request("POST", clean_path(path), headers=headers, content=content)
@@ -99,6 +106,9 @@ async def package_put(request: Request, path: str):
 
     headers = request.headers.items()
     headers.append(("cookie", cookie))
+    user_agent = request.headers.get("User-Agent")
+    if robot_name(user_agent) is not None:
+        headers.append(("Robot", user_agent))
     body = await request.body()
     content = body.decode("utf-8")
     req = client.build_request("PUT", clean_path(path), headers=headers, content=content)
@@ -128,7 +138,9 @@ async def package_delete(request: Request, path: str):
 
     headers = request.headers.items()
     headers.append(("cookie", cookie))
-
+    user_agent = request.headers.get("User-Agent")
+    if robot_name(user_agent) is not None:
+        headers.append(("Robot", user_agent))
     req = client.build_request("DELETE", clean_path(path), headers=headers)
     resp = await client.send(req, stream=True)
 
