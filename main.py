@@ -26,7 +26,7 @@ from filter import audit
 
 
 cwd = os.path.dirname(os.path.realpath(__file__))
-logfile = cwd + "/web-x.log"
+logfile = cwd + "/gatekeeper.log"
 daiquiri.setup(level=logging.INFO,
                outputs=(daiquiri.output.File(logfile), "stdout",))
 logger = daiquiri.getLogger(__name__)
