@@ -35,13 +35,15 @@ client = httpx.AsyncClient(base_url=f'http://localhost:8080/audit/')
 async def audit_get(request: Request, path: str):
     try:
         pt: PastaToken = await authenticate(request=request)
-        cookie = {"auth-token": pt.to_b64().decode("utf-8")}
+        cookie = f"auth-token={pt.to_b64().decode('utf-8')}"
     except (AuthenticationException, ExpiredTokenException, InvalidTokenException) as ex:
         status = ex.args[1]
         msg = ex.args[0]
         return fastapi.responses.PlainTextResponse(f"{status}: {msg}", status_code=status)
 
-    req = client.build_request("GET", clean_path(path), cookies=cookie, headers=request.headers)
+    headers = request.headers.items()
+    headers.append(("cookie", cookie))
+    req = client.build_request("GET", clean_path(path), headers=headers)
     resp = await client.send(req, stream=True)
 
     headers = resp.headers
@@ -60,15 +62,17 @@ async def audit_get(request: Request, path: str):
 async def audit_post(request: Request, path: str):
     try:
         pt: PastaToken = await authenticate(request=request)
-        cookie = {"auth-token": pt.to_b64().decode("utf-8")}
+        cookie = f"auth-token={pt.to_b64().decode('utf-8')}"
     except (AuthenticationException, ExpiredTokenException, InvalidTokenException) as ex:
         status = ex.args[1]
         msg = ex.args[0]
         return fastapi.responses.PlainTextResponse(f"{status}: {msg}", status_code=status)
 
+    headers = request.headers.items()
+    headers.append(("cookie", cookie))
     body = await request.body()
     content = body.decode("utf-8")
-    req = client.build_request("POST", clean_path(path), cookies=cookie, headers=request.headers, content=content)
+    req = client.build_request("POST", clean_path(path), headers=headers, content=content)
     resp = await client.send(req, stream=True)
 
     headers = resp.headers
@@ -87,15 +91,17 @@ async def audit_post(request: Request, path: str):
 async def audit_put(request: Request, path: str):
     try:
         pt: PastaToken = await authenticate(request=request)
-        cookie = {"auth-token": pt.to_b64().decode("utf-8")}
+        cookie = f"auth-token={pt.to_b64().decode('utf-8')}"
     except (AuthenticationException, ExpiredTokenException, InvalidTokenException) as ex:
         status = ex.args[1]
         msg = ex.args[0]
         return fastapi.responses.PlainTextResponse(f"{status}: {msg}", status_code=status)
 
+    headers = request.headers.items()
+    headers.append(("cookie", cookie))
     body = await request.body()
     content = body.decode("utf-8")
-    req = client.build_request("PUT", clean_path(path), cookies=cookie, headers=request.headers, content=content)
+    req = client.build_request("PUT", clean_path(path), headers=request, content=content)
     resp = await client.send(req, stream=True)
 
     headers = resp.headers
@@ -114,13 +120,15 @@ async def audit_put(request: Request, path: str):
 async def audit_delete(request: Request, path: str):
     try:
         pt: PastaToken = await authenticate(request=request)
-        cookie = {"auth-token": pt.to_b64().decode("utf-8")}
+        cookie = f"auth-token={pt.to_b64().decode('utf-8')}"
     except (AuthenticationException, ExpiredTokenException, InvalidTokenException) as ex:
         status = ex.args[1]
         msg = ex.args[0]
         return fastapi.responses.PlainTextResponse(f"{status}: {msg}", status_code=status)
 
-    req = client.build_request("DELETE", clean_path(path), cookies=cookie, headers=request.headers)
+    headers = request.headers.items()
+    headers.append(("cookie", cookie))
+    req = client.build_request("DELETE", clean_path(path), headers=request.headers)
     resp = await client.send(req, stream=True)
 
     headers = resp.headers
