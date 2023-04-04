@@ -12,6 +12,7 @@
 :Created:
     3/28/23
 """
+import logging
 
 
 class Config:
@@ -32,4 +33,7 @@ class Config:
 
     # Robot patterns
     ROBOTS = "<PATH TO PROJECT ROOT>/resources/robotPatterns.txt"
+
+    # Logging level
+    LEVEL = logging.INFO
 
