@@ -1,0 +1,22 @@
+[Unit]
+Description=gunicorn uvicorn service for PASTA Gatekeeper
+After=syslog.target
+
+[Service]
+ExecStart=/home/pasta/miniconda3/envs/gatekeeper/bin/gunicorn -b 127.0.0.1:8088  -w 8 -k uvicorn.workers.UvicornWorker main:app --name gatekeeper --chdir /home/pasta/web-x --access-logfile /home/pasta/Gatekeeper/gatekeeper.log --error-logfile /home/pasta/Gatekeeper/errors.log --user pasta
+
+ExecReload=/bin/kill -s HUP $MAINPID
+KillMode=mixed
+TimeoutStopSec=5
+PrivateTmp=true
+
+# Requires systemd version 211 or newer
+RuntimeDirectory=/home/pasta/Gatekeeper
+Restart=always
+Type=notify
+StandardError=syslog
+NotifyAccess=all
+
+
+[Install]
+WantedBy=multi-user.target
