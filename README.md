@@ -10,6 +10,9 @@ token set as a Cookie using the *auth-token* key. See
 [here](https://pastaplus-core.readthedocs.io/en/latest/doc_tree/pasta_design/gatekeeper.html) for more 
 information about the PASTA Gatekeeper.
 
+As a reverse proxy, the Gatekeeper routes requests to either the Data Package
+Manager service or the Audit Manager service.
+
 The Gatekeeper service is the first of the PASTA primary services to migrate
 from a Java servlet model to a Python framework based on the high-performance
 and asynchronous *FastAPI*.
