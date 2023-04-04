@@ -13,7 +13,6 @@
 :Created:
     3/27/23
 """
-import logging
 import os
 
 import daiquiri
