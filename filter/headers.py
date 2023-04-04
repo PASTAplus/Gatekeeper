@@ -35,7 +35,7 @@ async def make_request_headers(request: Request) -> tuple:
     user_agent = request.headers.get("User-Agent")
     if robot_name(user_agent) is not None:
         headers.append(("Robot", user_agent))
-    logger.debug(headers)
+    logger.debug(f"Request - {headers}")
     return pt, headers
 
 
@@ -44,6 +44,6 @@ def make_response_headers(pasta_token: PastaToken, response: Response) -> dict:
     if pasta_token.uid != Config.PUBLIC:
         auth_token = create_authtoken(Config.PRIVATE_KEY, pasta_token.to_string())
         headers["set-cookie"] = f"auth-token={auth_token}"
-    logger.debug(headers)
+    logger.debug(f"Response - {headers}")
     return headers
 
