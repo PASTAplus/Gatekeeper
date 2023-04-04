@@ -1,3 +1,6 @@
+![Gatekeeper](https://github.com/PASTAplus/Gatekeeper/actions/workflows/gatekeeper-build.yml/badge.svg)
+
+
 # PASTA Gatekeeper
 
 The PASTA Gatekeeper service is the public facing entry point for access to the
