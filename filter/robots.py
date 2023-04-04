@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-:Mod: bot_matcher
+:Mod: robots
 
 :Synopsis:
 
@@ -18,9 +18,9 @@ from filter import robot_patterns
 
 
 def robot_name(user_agent: str) -> str:
-    robot = None
+    rn = None
     for pattern in robot_patterns:
         if re.search(pattern.strip(), user_agent):
-            robot = user_agent
+            rn = user_agent
             break
-    return robot
+    return rn
