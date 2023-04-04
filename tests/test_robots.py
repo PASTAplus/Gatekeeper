@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-:Mod: test_bot_matcher
+:Mod: test_robots
 
 :Synopsis:
 
@@ -12,9 +12,7 @@
 :Created:
     4/3/23
 """
-import pytest
-
-from filter.bot_matcher import robot_name
+from filter.robots import robot_name
 
 
 def test_robot_name():
