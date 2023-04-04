@@ -6,9 +6,7 @@ both an authentication service and a reverse proxy.
 
 As an authentication service, the Gatekeeper consumes either a standard
 *authorization* header using the *Basic* scheme or a custom PASTA authentication
-token set as a Cookie using the *auth-token* key. See
-[here](https://pastaplus-core.readthedocs.io/en/latest/doc_tree/pasta_design/gatekeeper.html) for more 
-information about the PASTA Gatekeeper.
+token set as a Cookie using the *auth-token* key.
 
 As a reverse proxy, the Gatekeeper routes requests to either the Data Package
 Manager service or the Audit Manager service.
@@ -16,6 +14,9 @@ Manager service or the Audit Manager service.
 The Gatekeeper service is the first of the PASTA primary services to migrate
 from a Java servlet model to a Python framework based on the high-performance
 and asynchronous *FastAPI*.
+
+See [here](https://pastaplus-core.readthedocs.io/en/latest/doc_tree/pasta_design/gatekeeper.html)
+for more information about the PASTA Gatekeeper.
 
 ![Gatekeeper](https://github.com/PASTAplus/Gatekeeper/actions/workflows/gatekeeper-build.yml/badge.svg?branch=main) - Main
 
