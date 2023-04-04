@@ -2,7 +2,7 @@
 
 The PASTA Gatekeeper service is the public facing entry point for access to the
 more general services of the PASTA data repository. The Gatekeeper acts as 
-both an authentication service and as a reverse proxy.
+both an authentication service and a reverse proxy.
 
 As an authentication service, the Gatekeeper consumes either a standard
 *authorization* header using the *Basic* scheme or a custom PASTA authentication
