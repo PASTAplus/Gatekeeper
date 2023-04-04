@@ -1,4 +1,6 @@
-![Gatekeeper](https://github.com/PASTAplus/Gatekeeper/actions/workflows/gatekeeper-build.yml/badge.svg)
+![Gatekeeper](https://github.com/PASTAplus/Gatekeeper/actions/workflows/gatekeeper-build.yml/badge.svg?branch=${main})
+![Gatekeeper](https://github.com/PASTAplus/Gatekeeper/actions/workflows/gatekeeper-build.yml/badge.svg?branch=${staging})
+![Gatekeeper](https://github.com/PASTAplus/Gatekeeper/actions/workflows/gatekeeper-build.yml/badge.svg?branch=${development})
 
 
 # PASTA Gatekeeper
