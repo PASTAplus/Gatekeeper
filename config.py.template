@@ -1,0 +1,35 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+:Mod: config.py
+
+:Synopsis:
+
+:Author:
+    pasta
+
+:Created:
+    3/28/23
+"""
+
+
+class Config:
+
+    # PASTA+ authentication token attributes
+    PUBLIC = "public"
+    SYSTEM = "https://pasta.edirepository.org/authentication"
+    VETTED = "vetted*authenticated"
+    AUTHENTICATED = "authenticated"
+    TTL = 28800000
+
+    # EDI Authentication service
+    AUTH = "AUTHENTICATION SERVICE ENDPOINT"
+
+    # Key attributes
+    PUBLIC_KEY = "<PATH TO PROJECT ROOT>/keys/<PUBLIC KEY>"
+    PRIVATE_KEY = "<PATH TO PROJECT ROOT>/keys/<PRIVATE KEY>"
+
+    # Robot patterns
+    ROBOTS = "<PATH TO PROJECT ROOT>/resources/robotPatterns.txt"
+
