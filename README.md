@@ -17,8 +17,8 @@ The Gatekeeper service is the first of the PASTA primary services to migrate
 from a Java servlet model to a Python framework based on the high-performance
 and asynchronous *FastAPI*.
 
-![Gatekeeper](https://github.com/PASTAplus/Gatekeeper/actions/workflows/gatekeeper-build.yml/badge.svg?branch=${main}) - Main
+![Gatekeeper](https://github.com/PASTAplus/Gatekeeper/actions/workflows/gatekeeper-build.yml/badge.svg?branch=main) - Main
 
-![Gatekeeper](https://github.com/PASTAplus/Gatekeeper/actions/workflows/gatekeeper-build.yml/badge.svg?branch=${staging}) - Staging
+![Gatekeeper](https://github.com/PASTAplus/Gatekeeper/actions/workflows/gatekeeper-build.yml/badge.svg?branch=staging) - Staging
 
-![Gatekeeper](https://github.com/PASTAplus/Gatekeeper/actions/workflows/gatekeeper-build.yml/badge.svg?branch=${development}) - Development
+![Gatekeeper](https://github.com/PASTAplus/Gatekeeper/actions/workflows/gatekeeper-build.yml/badge.svg?branch=development) - Development
