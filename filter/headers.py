@@ -5,13 +5,15 @@
 :Mod: headers
 
 :Synopsis:
+    Generate request and response headers.
 
 :Author:
-    pasta
+    servilla
 
 :Created:
     4/3/23
 """
+import daiquiri
 from httpx import Response
 from starlette.requests import Request
 
@@ -22,6 +24,9 @@ from config import Config
 from filter.robots import robot_name
 
 
+logger = daiquiri.getLogger(__name__)
+
+
 async def make_request_headers(request: Request) -> tuple:
     pt: PastaToken = await authenticate(request=request)
     headers = request.headers.items()
@@ -30,6 +35,7 @@ async def make_request_headers(request: Request) -> tuple:
     user_agent = request.headers.get("User-Agent")
     if robot_name(user_agent) is not None:
         headers.append(("Robot", user_agent))
+    logger.debug(headers)
     return pt, headers
 
 
@@ -38,5 +44,6 @@ def make_response_headers(pasta_token: PastaToken, response: Response) -> dict:
     if pasta_token.uid != Config.PUBLIC:
         auth_token = create_authtoken(Config.PRIVATE_KEY, pasta_token.to_string())
         headers["set-cookie"] = f"auth-token={auth_token}"
+    logger.debug(headers)
     return headers
 

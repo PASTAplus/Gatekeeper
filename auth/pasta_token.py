@@ -5,9 +5,10 @@
 :Mod: pasta_token
 
 :Synopsis:
+    Manages an instance of a PASTA authentication token.
 
 :Author:
-    pasta
+    servilla
 
 :Created:
     3/28/23
@@ -17,7 +18,6 @@ import base64
 import daiquiri
 import pendulum
 
-from auth.pasta_crypto import create_authtoken
 from config import Config
 
 
@@ -105,11 +105,3 @@ class PastaToken:
     def from_auth_token(self, at: str):
         t_b64 = at.split("-")[0]
         self.from_b64(t_b64)
-
-
-def main():
-    return 0
-
-
-if __name__ == "__main__":
-    main()

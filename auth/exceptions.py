@@ -5,9 +5,10 @@
 :Mod: auth_exceptions
 
 :Synopsis:
+    Authentication related exceptions.
 
 :Author:
-    pasta
+    servilla
 
 :Created:
     3/28/23

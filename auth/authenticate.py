@@ -5,6 +5,7 @@
 :Mod: manager
 
 :Synopsis:
+    Perform PASTA-based authentication.
 
 :Author:
     pasta
@@ -36,17 +37,21 @@ async def authenticate(request: Request) -> PastaToken:
         external_token = request.cookies.get("auth-token")
         if external_token is not None:
             try:
-                pasta_crypto.verify_authtoken(Config.PUBLIC_KEY, external_token)
+                pasta_crypto.verify_auth_token(Config.PUBLIC_KEY, external_token)
             except Exception as ex:
                 msg = f"Invalid authentication token"
+                logger.error(msg)
                 raise InvalidTokenException(msg, status.HTTP_400_BAD_REQUEST)
             pt.from_auth_token(external_token)
             if not pt.is_valid_ttl():
                 msg = f"Expired authentication token"
+                logger.error(msg)
                 raise ExpiredTokenException(msg, status.HTTP_401_UNAUTHORIZED)
         else:
             pt.uid = Config.PUBLIC
             pt.system = Config.SYSTEM
+    msg = f"Authentication for user '{pt.to_string()}'"
+    logger.debug(msg)
     return pt
 
 

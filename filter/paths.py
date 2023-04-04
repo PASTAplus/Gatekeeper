@@ -5,9 +5,10 @@
 :Mod: paths
 
 :Synopsis:
+    Clean URL paths with PASTA conflicting patterns.
 
 :Author:
-    pasta
+    servilla
 
 :Created:
     4/2/23
