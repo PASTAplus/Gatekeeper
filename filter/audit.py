@@ -5,7 +5,7 @@
 :Mod: audit
 
 :Synopsis:
-    Reverse proxy service for the PASTA Audit Manager
+    Reverse proxy service for the PASTA Audit Manager.
 
 :Author:
     servilla
