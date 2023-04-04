@@ -5,6 +5,7 @@
 :Mod: main
 
 :Synopsis:
+    Main driver for the Gatekeeper FastAPI framework
 
 :Author:
     servilla
@@ -20,14 +21,15 @@ import fastapi
 import uvicorn
 from starlette.staticfiles import StaticFiles
 
-from views import index
+from config import Config
 from filter import package
 from filter import audit
+from views import index
 
 
 cwd = os.path.dirname(os.path.realpath(__file__))
 logfile = cwd + "/gatekeeper.log"
-daiquiri.setup(level=logging.INFO,
+daiquiri.setup(level=Config.LEVEL,
                outputs=(daiquiri.output.File(logfile), "stdout",))
 logger = daiquiri.getLogger(__name__)
 

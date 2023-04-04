@@ -5,9 +5,10 @@
 :Mod: index
 
 :Synopsis:
+    Human response for hits to the Gatekeeper root path.
 
 :Author:
-    pasta
+    servilla
 
 :Created:
     3/27/23

@@ -5,9 +5,10 @@
 :Mod: __init__
 
 :Synopsis:
+    Initialize robot_patterns list at package load.
 
 :Author:
-    pasta
+    servilla
 
 :Created:
     4/3/23

@@ -5,13 +5,15 @@
 :Mod: audit
 
 :Synopsis:
+    Reverse proxy service for the PASTA Audit Manager
 
 :Author:
-    pasta
+    servilla
 
 :Created:
     3/27/23
 """
+import daiquiri
 import fastapi
 import httpx
 from starlette.requests import Request
@@ -22,6 +24,8 @@ from auth.exceptions import AuthenticationException, ExpiredTokenException, Inva
 from filter.headers import make_request_headers, make_response_headers
 from filter.paths import clean_path
 
+
+logger = daiquiri.getLogger(__name__)
 
 router = fastapi.APIRouter()
 client = httpx.AsyncClient(base_url=f'http://localhost:8080/audit/')
@@ -34,6 +38,7 @@ async def audit_get(request: Request, path: str):
     except (AuthenticationException, ExpiredTokenException, InvalidTokenException) as ex:
         status = ex.args[1]
         msg = ex.args[0]
+        logger.error(f"{status}: {msg}")
         return fastapi.responses.PlainTextResponse(f"{status}: {msg}", status_code=status)
     req = client.build_request("GET", clean_path(path), headers=req_headers)
     response = await client.send(req, stream=True)
@@ -53,6 +58,7 @@ async def audit_post(request: Request, path: str):
     except (AuthenticationException, ExpiredTokenException, InvalidTokenException) as ex:
         status = ex.args[1]
         msg = ex.args[0]
+        logger.error(f"{status}: {msg}")
         return fastapi.responses.PlainTextResponse(f"{status}: {msg}", status_code=status)
     body = await request.body()
     content = body.decode("utf-8")
@@ -74,6 +80,7 @@ async def audit_put(request: Request, path: str):
     except (AuthenticationException, ExpiredTokenException, InvalidTokenException) as ex:
         status = ex.args[1]
         msg = ex.args[0]
+        logger.error(f"{status}: {msg}")
         return fastapi.responses.PlainTextResponse(f"{status}: {msg}", status_code=status)
     body = await request.body()
     content = body.decode("utf-8")
@@ -95,6 +102,7 @@ async def audit_delete(request: Request, path: str):
     except (AuthenticationException, ExpiredTokenException, InvalidTokenException) as ex:
         status = ex.args[1]
         msg = ex.args[0]
+        logger.error(f"{status}: {msg}")
         return fastapi.responses.PlainTextResponse(f"{status}: {msg}", status_code=status)
     req = client.build_request("DELETE", clean_path(path), headers=req_headers)
     response = await client.send(req, stream=True)
