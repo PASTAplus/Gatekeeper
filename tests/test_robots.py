@@ -12,7 +12,7 @@
 :Created:
     4/3/23
 """
-from filter.robots import robot_name
+from webapp.filter.robots import robot_name
 
 
 def test_robot_name():

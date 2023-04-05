@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-:Mod: audit
+:Mod: package
 
 :Synopsis:
     Reverse proxy service for the PASTA Audit Manager.
@@ -21,18 +21,18 @@ from starlette.responses import StreamingResponse
 from starlette.background import BackgroundTask
 
 from auth.exceptions import AuthenticationException, ExpiredTokenException, InvalidTokenException
+from config import Config
 from filter.headers import make_request_headers, make_response_headers
 from filter.paths import clean_path
 
 
 logger = daiquiri.getLogger(__name__)
-
 router = fastapi.APIRouter()
-client = httpx.AsyncClient(base_url=f'http://localhost:8080/audit/')
+client = httpx.AsyncClient(base_url=Config.PACKAGE)
 
 
-@router.get("/audit/{path:path}")
-async def audit_get(request: Request, path: str):
+@router.get("/package/{path:path}")
+async def package_get(request: Request, path: str):
     try:
         pasta_token, req_headers = await make_request_headers(request)
     except (AuthenticationException, ExpiredTokenException, InvalidTokenException) as ex:
@@ -51,8 +51,8 @@ async def audit_get(request: Request, path: str):
     )
 
 
-@router.post("/audit/{path:path}")
-async def audit_post(request: Request, path: str):
+@router.post("/package/{path:path}")
+async def package_post(request: Request, path: str):
     try:
         pasta_token, req_headers = await make_request_headers(request)
     except (AuthenticationException, ExpiredTokenException, InvalidTokenException) as ex:
@@ -73,8 +73,8 @@ async def audit_post(request: Request, path: str):
     )
 
 
-@router.put("/audit/{path:path}")
-async def audit_put(request: Request, path: str):
+@router.put("/package/{path:path}")
+async def package_put(request: Request, path: str):
     try:
         pasta_token, req_headers = await make_request_headers(request)
     except (AuthenticationException, ExpiredTokenException, InvalidTokenException) as ex:
@@ -95,8 +95,8 @@ async def audit_put(request: Request, path: str):
     )
 
 
-@router.delete("/audit/{path:path}")
-async def audit_delete(request: Request, path: str):
+@router.delete("/package/{path:path}")
+async def package_delete(request: Request, path: str):
     try:
         pasta_token, req_headers = await make_request_headers(request)
     except (AuthenticationException, ExpiredTokenException, InvalidTokenException) as ex:

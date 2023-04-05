@@ -25,7 +25,6 @@ from filter import package
 from filter import audit
 from views import index
 
-
 cwd = os.path.dirname(os.path.realpath(__file__))
 logfile = cwd + "/gatekeeper.log"
 daiquiri.setup(level=Config.LEVEL,
@@ -41,7 +40,7 @@ def configure(dev_mode: bool):
 
 
 def configure_routes():
-    app.mount('/static', StaticFiles(directory='static'), name='static')
+    app.mount('/static', StaticFiles(directory=Config.STATIC), name='static')
     app.include_router(index.router)
     app.include_router(package.router)
     app.include_router(audit.router)
