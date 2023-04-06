@@ -36,8 +36,9 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Check website status
       run: |
+        cd webapp
         cp config.py.template config.py
-        sed -i "s/<PATH TO PROJECT ROOT>/${PWD//\//\\/}/" ./config.py
+        sed -i "s/<PATH TO PROJECT ROOT>/${PWD//\//\\/}/" config.py
         python main.py&
         sleep 5
         if curl -sSf http://127.0.0.1:8088/ > /dev/null; then
