@@ -34,6 +34,9 @@ class Config:
     # Robot patterns
     ROBOTS = "<PATH TO PROJECT ROOT>/resources/robotPatterns.txt"
 
+    # Static directory path
+    STATIC = "<PATH TO PROJECT ROOT>/static"
+
     # Logging level
     LEVEL = logging.INFO
 
