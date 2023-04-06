@@ -24,6 +24,10 @@ class Config:
     AUTHENTICATED = "authenticated"
     TTL = 28800000
 
+    # PASTA service endpoints
+    PACKAGE = f"http://localhost:8080/package/"
+    AUDIT = f"http://localhost:8080/audit/"
+
     # EDI Authentication service
     AUTH = "AUTHENTICATION SERVICE ENDPOINT"
 
