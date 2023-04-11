@@ -7,7 +7,7 @@
 :Synopsis:
 
 :Author:
-    pasta
+    servilla
 
 :Created:
     3/28/23
@@ -25,8 +25,8 @@ class Config:
     TTL = 28800000
 
     # PASTA service endpoints
-    PACKAGE = f"http://localhost:8080/package/"
-    AUDIT = f"http://localhost:8080/audit/"
+    PACKAGE = f"<PACKAGE HOST>/package/"
+    AUDIT = f"<AUDIT HOST>/audit/"
 
     # EDI Authentication service
     AUTH = "AUTHENTICATION SERVICE ENDPOINT"
