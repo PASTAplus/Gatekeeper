@@ -1,0 +1,24 @@
+/home/pasta/Gatekeeper/*.log {
+	monthly
+	missingok
+	rotate 6
+	compress
+	delaycompress
+	notifempty
+	sharedscripts
+	postrotate
+		systemctl reload gatekeeper.service
+	endscript
+}
+/home/pasta/Gatekeeper/webapp/gatekeeper.log {
+	daily
+	missingok
+	rotate 24
+	compress
+	delaycompress
+	notifempty
+	sharedscripts
+	postrotate
+		systemctl reload gatekeeper.service
+	endscript
+}
