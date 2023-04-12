@@ -44,3 +44,5 @@ class Config:
     # Logging level
     LEVEL = logging.INFO
 
+    # Proxy timeout (seconds)
+    TIMEOUT = 120.0
