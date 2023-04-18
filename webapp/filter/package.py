@@ -42,7 +42,7 @@ async def package_get(request: Request, path: str):
         logger.error(f"{status}: {msg}")
         return fastapi.responses.PlainTextResponse(f"{status}: {msg}",
                                                    status_code=status)
-    params = dict(request.query_params)
+    params = str(request.query_params)
     body = await request.body()
     content = body.decode("utf-8")
     req = client.build_request("GET", clean_path(path), headers=req_headers,
@@ -72,7 +72,7 @@ async def package_post(request: Request, path: str):
         logger.error(f"{status}: {msg}")
         return fastapi.responses.PlainTextResponse(f"{status}: {msg}",
                                                    status_code=status)
-    params = dict(request.query_params)
+    params = str(request.query_params)
     body = await request.body()
     content = body.decode("utf-8")
     req = client.build_request("POST", clean_path(path), headers=req_headers,
@@ -102,7 +102,7 @@ async def package_put(request: Request, path: str):
         logger.error(f"{status}: {msg}")
         return fastapi.responses.PlainTextResponse(f"{status}: {msg}",
                                                    status_code=status)
-    params = dict(request.query_params)
+    params = str(request.query_params)
     body = await request.body()
     content = body.decode("utf-8")
     req = client.build_request("PUT", clean_path(path), headers=req_headers,
@@ -132,7 +132,7 @@ async def package_delete(request: Request, path: str):
         logger.error(f"{status}: {msg}")
         return fastapi.responses.PlainTextResponse(f"{status}: {msg}",
                                                    status_code=status)
-    params = dict(request.query_params)
+    params = str(request.query_params)
     body = await request.body()
     content = body.decode("utf-8")
     req = client.build_request("DELETE", clean_path(path), headers=req_headers,
