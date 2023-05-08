@@ -149,3 +149,33 @@ async def package_delete(request: Request, path: str):
     except httpx.HTTPError as ex:
         logger.error(ex)
         raise ex
+
+
+@router.head("/package/{path:path}")
+async def package_head(request: Request, path: str):
+    try:
+        pasta_token, req_headers = await make_request_headers(request)
+    except (AuthenticationException, ExpiredTokenException,
+            InvalidTokenException) as ex:
+        status = ex.args[1]
+        msg = ex.args[0]
+        logger.error(f"{status}: {msg}")
+        return fastapi.responses.PlainTextResponse(f"{status}: {msg}",
+                                                   status_code=status)
+    params = str(request.query_params)
+    body = await request.body()
+    content = body.decode("utf-8")
+    req = client.build_request("HEAD", clean_path(path), headers=req_headers,
+                               params=params, content=content)
+    try:
+        response = await client.send(req, stream=True)
+        resp_headers = make_response_headers(pasta_token, response)
+        return StreamingResponse(
+            response.aiter_raw(),
+            background=BackgroundTask(response.aclose),
+            headers=resp_headers,
+            status_code=response.status_code
+        )
+    except httpx.HTTPError as ex:
+        logger.error(ex)
+        raise ex
