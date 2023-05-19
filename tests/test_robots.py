@@ -19,3 +19,4 @@ def test_robot_name():
     assert robot_name("nojoybot") is not None
     assert robot_name("google") is None
     assert robot_name("python") is None
+    assert robot_name(None) is not None
