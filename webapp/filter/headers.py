@@ -33,8 +33,9 @@ async def make_request_headers(request: Request) -> tuple:
     cookie = f"auth-token={pt.to_b64().decode('utf-8')}"
     headers.append(("cookie", cookie))
     user_agent = request.headers.get("User-Agent")
-    if robot_name(user_agent) is not None:
-        headers.append(("Robot", user_agent))
+    rn = robot_name(user_agent)
+    if rn is not None:
+        headers.append(("Robot", rn))
     logger.debug(f"Request - {headers}")
     return pt, headers
 
