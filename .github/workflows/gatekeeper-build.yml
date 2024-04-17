@@ -38,7 +38,8 @@ jobs:
     - name: Test with pytest
       run: |
         conda install pytest --solver=classic
-        pytest tests
+        cd tests
+        pytest
     - name: Check website status
       run: |
         cd webapp

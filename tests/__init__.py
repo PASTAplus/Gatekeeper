@@ -19,6 +19,7 @@ import sys
 import daiquiri
 
 sys.path.insert(0, os.path.abspath("../webapp"))
+sys.path.insert(0, os.path.abspath(".."))
 
 cwd = os.path.dirname(os.path.realpath(__file__))
 logfile = cwd + "/tests.log"
