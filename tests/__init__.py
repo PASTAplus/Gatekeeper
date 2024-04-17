@@ -25,11 +25,3 @@ logfile = cwd + "/tests.log"
 daiquiri.setup(
     level=logging.INFO, outputs=(daiquiri.output.File(logfile), "stdout",)
 )
-
-
-def main():
-    return 0
-
-
-if __name__ == "__main__":
-    main()
