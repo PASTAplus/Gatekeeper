@@ -26,7 +26,6 @@ PrivateTmp=true
 RuntimeDirectory=/home/pasta/Gatekeeper/webapp
 Restart=always
 Type=notify
-StandardError=syslog
 NotifyAccess=all
 
 
