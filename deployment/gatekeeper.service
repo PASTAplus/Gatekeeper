@@ -9,6 +9,9 @@ ExecStart=/home/pasta/miniconda3/envs/gatekeeper/bin/gunicorn \
 -k uvicorn.workers.UvicornWorker main:app \
 --name gatekeeper \
 --chdir /home/pasta/Gatekeeper/webapp \
+--timeout 0 \
+--max-requests 100 \
+--max-requests-jitter 10 \
 --log-level info \
 --access-logfile /home/pasta/Gatekeeper/gunicorn.log \
 --error-logfile /home/pasta/Gatekeeper/gunicorn-error.log \
