@@ -6,7 +6,6 @@ on:
   pull_request:
     branches: [ main, staging, development ]
   workflow_dispatch:
-    branches: [ main, staging, development ]
 
 jobs:
   build-linux:
