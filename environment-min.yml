@@ -5,7 +5,7 @@ channels:
 dependencies:
   - daiquiri
   - uvicorn
-  - python=3.11
+  - python=3.12
   - pytest
   - httpx
   - black
