@@ -19,7 +19,7 @@ import pathlib
 class Config:
 
     # Logging
-    LOG_PATH = pathlib.Path('/var/log/pasta')
+    LOG_PATH = pathlib.Path("<PATH TO PROJECT ROOT>")
     LOG_LEVEL = logging.WARN
 
     # PASTA+ authentication token attributes
