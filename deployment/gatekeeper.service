@@ -3,6 +3,11 @@ Description=gunicorn uvicorn service for PASTA Gatekeeper
 After=syslog.target
 
 [Service]
+User=pasta
+Group=www-data
+WorkingDirectory=/home/pasta/Gatekeeper/webapp
+Environment="PATH=/home/pasta/miniconda3/envs/gatekeeper/bin"
+
 ExecStart=/home/pasta/miniconda3/envs/gatekeeper/bin/gunicorn \
 -b <HOST_IP:PORT> \
 -w 8 \
@@ -13,8 +18,8 @@ ExecStart=/home/pasta/miniconda3/envs/gatekeeper/bin/gunicorn \
 --max-requests 100 \
 --max-requests-jitter 10 \
 --log-level info \
---access-logfile /home/pasta/Gatekeeper/gunicorn.log \
---error-logfile /home/pasta/Gatekeeper/gunicorn-error.log \
+--access-logfile /var/log/pasta/gunicorn.log \
+--error-logfile /var/log/gunicorn-error.log \
 --user pasta
 
 ExecReload=/bin/kill -s HUP $MAINPID
@@ -23,7 +28,7 @@ TimeoutStopSec=5
 PrivateTmp=true
 
 # Requires systemd version 211 or newer
-RuntimeDirectory=/home/pasta/Gatekeeper/webapp
+RuntimeDirectory=gatekeeper
 Restart=always
 Type=notify
 NotifyAccess=all
