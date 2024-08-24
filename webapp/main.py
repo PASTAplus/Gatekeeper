@@ -26,8 +26,14 @@ from filter import audit
 from views import index
 
 
-daiquiri.setup(level=Config.LOG_LEVEL,
-               outputs=(daiquiri.output.File(Config.LOG_PATH), "stdout",))
+daiquiri.setup(
+    level=Config.LOG_LEVEL,
+    outputs=(
+        daiquiri.output.File(Config.LOG_PATH / "gatekeeper.log"),
+        'stdout',
+    ),
+)
+
 logger = daiquiri.getLogger(__name__)
 
 
