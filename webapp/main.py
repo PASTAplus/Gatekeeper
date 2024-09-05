@@ -25,10 +25,15 @@ from filter import package
 from filter import audit
 from views import index
 
-cwd = os.path.dirname(os.path.realpath(__file__))
-logfile = cwd + "/gatekeeper.log"
-daiquiri.setup(level=Config.LEVEL,
-               outputs=(daiquiri.output.File(logfile), "stdout",))
+
+daiquiri.setup(
+    level=Config.LOG_LEVEL,
+    outputs=(
+        daiquiri.output.File(Config.LOG_PATH / "gatekeeper.log"),
+        'stdout',
+    ),
+)
+
 logger = daiquiri.getLogger(__name__)
 
 

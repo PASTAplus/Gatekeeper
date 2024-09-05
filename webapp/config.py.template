@@ -13,9 +13,14 @@
     3/28/23
 """
 import logging
+import pathlib
 
 
 class Config:
+
+    # Logging
+    LOG_PATH = pathlib.Path("<PATH TO PROJECT ROOT>")
+    LOG_LEVEL = logging.WARN
 
     # PASTA+ authentication token attributes
     PUBLIC = "public"
@@ -40,9 +45,6 @@ class Config:
 
     # Static directory path
     STATIC = "<PATH TO PROJECT ROOT>/static"
-
-    # Logging level
-    LEVEL = logging.INFO
 
     # Proxy timeout (seconds)
     TIMEOUT = 120.0
