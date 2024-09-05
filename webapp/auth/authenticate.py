@@ -18,7 +18,12 @@ import httpx
 from starlette.requests import Request
 import starlette.status as status
 
-from auth.exceptions import AuthenticationException, ExpiredTokenException, InvalidTokenException
+from auth.exceptions import (
+    AuthenticationException,
+    ExpiredTokenException,
+    InvalidTokenException,
+    InvalidCryptoKeyException
+)
 from auth.pasta_token import PastaToken
 import auth.pasta_crypto as pasta_crypto
 from config import Config
@@ -38,13 +43,13 @@ async def authenticate(request: Request) -> PastaToken:
         if external_token is not None:
             try:
                 pasta_crypto.verify_auth_token(Config.PUBLIC_KEY, external_token)
-            except Exception as ex:
-                msg = f"Invalid authentication token"
-                logger.error(msg)
-                raise InvalidTokenException(msg, status.HTTP_400_BAD_REQUEST)
+            except InvalidCryptoKeyException:
+                raise
+            except InvalidTokenException as ex:
+                raise InvalidTokenException(ex, status.HTTP_400_BAD_REQUEST)
             pt.from_auth_token(external_token)
             if not pt.is_valid_ttl():
-                msg = f"Expired authentication token"
+                msg = f"Authentication token time-to-live has expired, condolences"
                 logger.error(msg)
                 raise ExpiredTokenException(msg, status.HTTP_401_UNAUTHORIZED)
         else:
@@ -71,6 +76,6 @@ async def _authenticate(credentials: str) -> str:
     elif resp.status_code == status.HTTP_418_IM_A_TEAPOT:
         msg = "User must accept EDI Data Policy statement"
     else:
-        msg = "Unrecognized error occurred - response status code: {s}"
+        msg = f"Unrecognized error occurred - response status code {resp.status_code}"
     logger.error(msg)
     raise AuthenticationException(msg, resp.status_code)

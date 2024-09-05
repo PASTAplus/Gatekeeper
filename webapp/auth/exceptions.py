@@ -25,3 +25,6 @@ class ExpiredTokenException(Exception):
 
 class InvalidTokenException(Exception):
     pass
+
+class InvalidCryptoKeyException(Exception):
+    pass

@@ -20,14 +20,22 @@ from Crypto.PublicKey import RSA
 from Crypto.Signature import pkcs1_15
 import daiquiri
 
+from auth.exceptions import InvalidCryptoKeyException, InvalidTokenException
+
 logger = daiquiri.getLogger(__name__)
 
 
 def import_key(f: str) -> RSA.RsaKey:
-    with open(f, "r") as f:
-        key_file = f.read()
-    key = RSA.import_key(key_file)
-    return key
+    try:
+        with open(f, "r") as f:
+            key_file = f.read()
+        key = RSA.import_key(key_file)
+        return key
+    except FileNotFoundError as e:
+        msg = f"Crypto-key '{f}' not found"
+        logger.error(msg)
+        logger.error(e)
+        raise
 
 
 def verify_auth_token(public_key: str, auth_token: str):
@@ -46,15 +54,28 @@ def verify_auth_token(public_key: str, auth_token: str):
     :param auth_token:
     :return: None, if successful
     """
-    key = import_key(public_key)
-    token, signature = auth_token.split("-")
-    h = MD5.new(token.encode("utf-8"))
-    signature = base64.b64decode(signature)
-    pkcs1_15.new(key).verify(h, signature)
+    try:
+        key = import_key(public_key)
+    except FileNotFoundError as ex:
+        msg = "Public signing key not found"
+        raise InvalidCryptoKeyException(msg)
+    try:
+        token, signature = auth_token.split("-")
+        h = MD5.new(token.encode("utf-8"))
+        signature = base64.b64decode(signature)
+        pkcs1_15.new(key).verify(h, signature)
+    except ValueError as ex:
+        msg = "Authentication token could not be decoded or verified"
+        logger.error(msg)
+        raise InvalidTokenException(msg)
 
 
 def create_authtoken(private_key: str, token: str) -> str:
-    key = import_key(private_key)
+    try:
+        key = import_key(private_key)
+    except FileNotFoundError:
+        msg = "Private signing key not found"
+        raise InvalidCryptoKeyException(msg)
     token = base64.b64encode(token.encode("utf-8"))
     h = MD5.new(token)
     signature = base64.b64encode(pkcs1_15.new(key).sign(h))
