@@ -105,6 +105,7 @@ GLMSLinkAnalysis
 Goldfire(\s|\+)Server
 ###google
 Googlebot
+GoogleOther
 Grammarly
 grub
 gulliver
