@@ -47,4 +47,4 @@ class Config:
     STATIC = "<PATH TO PROJECT ROOT>/static"
 
     # Proxy timeout (seconds)
-    TIMEOUT = 120.0
+    TIMEOUT = 600
