@@ -20,8 +20,7 @@ from starlette.background import BackgroundTask
 from starlette.requests import Request
 from starlette.responses import StreamingResponse
 
-from auth.exceptions import AuthenticationException, ExpiredTokenException, \
-    InvalidTokenException
+from auth.exceptions import AuthenticationException, ExpiredTokenException, InvalidTokenException
 from config import Config
 from filter.headers import make_request_headers, make_response_headers
 from filter.paths import clean_path
@@ -36,18 +35,21 @@ client = httpx.AsyncClient(base_url=Config.AUDIT, timeout=Config.TIMEOUT)
 async def audit_get(request: Request, path: str):
     try:
         pasta_token, req_headers = await make_request_headers(request)
-    except (AuthenticationException, ExpiredTokenException,
-            InvalidTokenException) as ex:
+    except (AuthenticationException, ExpiredTokenException, InvalidTokenException) as ex:
         status = ex.args[1]
         msg = ex.args[0]
         logger.error(f"{status}: {msg}")
-        return fastapi.responses.PlainTextResponse(f"{status}: {msg}",
-                                                   status_code=status)
+        return fastapi.responses.PlainTextResponse(f"{status}: {msg}", status_code=status)
     params = str(request.query_params)
     body = await request.body()
     content = body.decode("utf-8")
-    req = client.build_request("GET", clean_path(path), headers=req_headers,
-                               params=params, content=content)
+    req = client.build_request(
+        "GET",
+        clean_path(path),
+        headers=req_headers,
+        params=params,
+        content=content
+    )
     try:
         response = await client.send(req, stream=True)
         resp_headers = make_response_headers(pasta_token, response)
@@ -66,18 +68,21 @@ async def audit_get(request: Request, path: str):
 async def audit_post(request: Request, path: str):
     try:
         pasta_token, req_headers = await make_request_headers(request)
-    except (AuthenticationException, ExpiredTokenException,
-            InvalidTokenException) as ex:
+    except (AuthenticationException, ExpiredTokenException, InvalidTokenException) as ex:
         status = ex.args[1]
         msg = ex.args[0]
         logger.error(f"{status}: {msg}")
-        return fastapi.responses.PlainTextResponse(f"{status}: {msg}",
-                                                   status_code=status)
+        return fastapi.responses.PlainTextResponse(f"{status}: {msg}", status_code=status)
     params = str(request.query_params)
     body = await request.body()
     content = body.decode("utf-8")
-    req = client.build_request("POST", clean_path(path), headers=req_headers,
-                               params=params, content=content)
+    req = client.build_request(
+        "POST",
+        clean_path(path),
+        headers=req_headers,
+        params=params,
+        content=content
+    )
     try:
         response = await client.send(req, stream=True)
         resp_headers = make_response_headers(pasta_token, response)
@@ -96,18 +101,21 @@ async def audit_post(request: Request, path: str):
 async def audit_put(request: Request, path: str):
     try:
         pasta_token, req_headers = await make_request_headers(request)
-    except (AuthenticationException, ExpiredTokenException,
-            InvalidTokenException) as ex:
+    except (AuthenticationException, ExpiredTokenException, InvalidTokenException) as ex:
         status = ex.args[1]
         msg = ex.args[0]
         logger.error(f"{status}: {msg}")
-        return fastapi.responses.PlainTextResponse(f"{status}: {msg}",
-                                                   status_code=status)
+        return fastapi.responses.PlainTextResponse(f"{status}: {msg}", status_code=status)
     params = str(request.query_params)
     body = await request.body()
     content = body.decode("utf-8")
-    req = client.build_request("PUT", clean_path(path), headers=req_headers,
-                               params=params, content=content)
+    req = client.build_request(
+        "PUT",
+        clean_path(path),
+        headers=req_headers,
+        params=params,
+        content=content
+    )
     try:
         response = await client.send(req, stream=True)
         resp_headers = make_response_headers(pasta_token, response)
@@ -126,18 +134,21 @@ async def audit_put(request: Request, path: str):
 async def audit_delete(request: Request, path: str):
     try:
         pasta_token, req_headers = await make_request_headers(request)
-    except (AuthenticationException, ExpiredTokenException,
-            InvalidTokenException) as ex:
+    except (AuthenticationException, ExpiredTokenException, InvalidTokenException) as ex:
         status = ex.args[1]
         msg = ex.args[0]
         logger.error(f"{status}: {msg}")
-        return fastapi.responses.PlainTextResponse(f"{status}: {msg}",
-                                                   status_code=status)
+        return fastapi.responses.PlainTextResponse(f"{status}: {msg}", status_code=status)
     params = str(request.query_params)
     body = await request.body()
     content = body.decode("utf-8")
-    req = client.build_request("DELETE", clean_path(path), headers=req_headers,
-                               params=params, content=content)
+    req = client.build_request(
+        "DELETE",
+        clean_path(path),
+        headers=req_headers,
+        params=params,
+        content=content
+    )
     try:
         response = await client.send(req, stream=True)
         resp_headers = make_response_headers(pasta_token, response)
@@ -156,18 +167,21 @@ async def audit_delete(request: Request, path: str):
 async def audit_head(request: Request, path: str):
     try:
         pasta_token, req_headers = await make_request_headers(request)
-    except (AuthenticationException, ExpiredTokenException,
-            InvalidTokenException) as ex:
+    except (AuthenticationException, ExpiredTokenException, InvalidTokenException) as ex:
         status = ex.args[1]
         msg = ex.args[0]
         logger.error(f"{status}: {msg}")
-        return fastapi.responses.PlainTextResponse(f"{status}: {msg}",
-                                                   status_code=status)
+        return fastapi.responses.PlainTextResponse(f"{status}: {msg}", status_code=status)
     params = str(request.query_params)
     body = await request.body()
     content = body.decode("utf-8")
-    req = client.build_request("HEAD", clean_path(path), headers=req_headers,
-                               params=params, content=content)
+    req = client.build_request(
+        "HEAD",
+        clean_path(path),
+        headers=req_headers,
+        params=params,
+        content=content
+    )
     try:
         response = await client.send(req, stream=True)
         resp_headers = make_response_headers(pasta_token, response)
