@@ -35,6 +35,7 @@ class Config:
 
     # EDI Authentication service
     AUTH = "AUTHENTICATION SERVICE ENDPOINT"
+    CAFILE = None
 
     # Key attributes
     PUBLIC_KEY = "<PATH TO PROJECT ROOT>/keys/<PUBLIC KEY>"

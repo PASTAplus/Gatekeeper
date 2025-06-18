@@ -13,8 +13,11 @@
 :Created:
     3/28/23
 """
+from pathlib import Path
+
 import daiquiri
 import httpx
+import ssl
 from starlette.requests import Request
 import starlette.status as status
 
@@ -36,7 +39,7 @@ async def authenticate(request: Request) -> PastaToken:
     pt = PastaToken()
     if "authorization" in request.headers:
         basic_auth = request.headers["authorization"]
-        external_token = await _authenticate(basic_auth)
+        external_token = await ldap_authenticate(basic_auth)
         pt.from_auth_token(external_token)
     else:
         external_token = request.cookies.get("auth-token")
@@ -60,12 +63,21 @@ async def authenticate(request: Request) -> PastaToken:
     return pt
 
 
-async def _authenticate(credentials: str) -> str:
-    client = httpx.AsyncClient(base_url=Config.AUTH)
+async def ldap_authenticate(credentials: str) -> str:
+    ctx = True
+    if Path(str(Config.CA_FILE)).exists():
+        # Create local SSL CA context if Config.CA_FILE is valid path
+        ctx = ssl.create_default_context(cafile=Config.CA_FILE)
+    client = httpx.AsyncClient(base_url=Config.AUTH, verify=ctx)
     headers = {"authorization": credentials}
     path = "/auth/login/pasta"
     req = client.build_request("GET", path, headers=headers)
-    resp = await client.send(req)
+    try:
+        resp = await client.send(req)
+    except httpx.ConnectError as ex:
+        logger.error(ex)
+        msg = f"Internal Server Error - SSL certificate of '{Config.AUTH}' cannot be verified"
+        raise AuthenticationException(msg, status.HTTP_500_INTERNAL_SERVER_ERROR)
     if resp.status_code == status.HTTP_200_OK:
         cookies = resp.cookies
         return cookies["auth-token"]
