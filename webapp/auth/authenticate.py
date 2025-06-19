@@ -64,11 +64,14 @@ async def authenticate(request: Request) -> PastaToken:
 
 
 async def ldap_authenticate(credentials: str) -> str:
-    ctx = True
-    if Path(str(Config.CA_FILE)).exists():
+    verify = True
+    if Path(str(Config.CA_FILE)).exists() and Path(str(Config.CA_FILE)).is_file():
         # Create local SSL CA context if Config.CA_FILE is valid path
-        ctx = ssl.create_default_context(cafile=Config.CA_FILE)
-    client = httpx.AsyncClient(base_url=Config.AUTH, verify=ctx)
+        verify = ssl.create_default_context(cafile=Config.CA_FILE)
+    else:
+        msg = f"Truststore file '{Config.CA_FILE}' does not exist"
+        logger.error(msg)
+    client = httpx.AsyncClient(base_url=Config.AUTH, verify=verify)
     headers = {"authorization": credentials}
     path = "/auth/login/pasta"
     req = client.build_request("GET", path, headers=headers)
