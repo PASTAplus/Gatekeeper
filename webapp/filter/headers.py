@@ -30,11 +30,10 @@ logger = daiquiri.getLogger(__name__)
 async def make_request_headers(pasta_token: PastaToken, request: Request) -> list:
     headers = []
     for header in request.headers:
-        if header.lower() == "cookie":
-            cookie = f"auth-token={pasta_token.to_b64().decode('utf-8')}"
-            headers.append(("cookie", cookie))
-        else:
+        if header.lower() != "cookie":
             headers.append((header, request.headers.get(header)))
+    cookie = f"auth-token={pasta_token.to_b64().decode('utf-8')}"
+    headers.append(("cookie", cookie))
     user_agent = request.headers.get("User-Agent")
     rn = robot_name(user_agent)
     if rn is not None:
