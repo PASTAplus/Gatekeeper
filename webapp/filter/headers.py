@@ -29,9 +29,13 @@ logger = daiquiri.getLogger(__name__)
 
 async def make_request_headers(request: Request) -> tuple:
     pt: PastaToken = await authenticate(request=request)
-    headers = request.headers.items()
-    cookie = f"auth-token={pt.to_b64().decode('utf-8')}"
-    headers.append(("cookie", cookie))
+    headers = []
+    for header in request.headers:
+        if header.lower() == "cookie":
+            cookie = f"auth-token={pt.to_b64().decode('utf-8')}"
+            headers.append(("cookie", cookie))
+        else:
+            headers.append((header, request.headers.get(header)))
     user_agent = request.headers.get("User-Agent")
     rn = robot_name(user_agent)
     if rn is not None:
