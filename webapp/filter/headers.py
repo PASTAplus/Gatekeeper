@@ -27,12 +27,11 @@ from filter.robots import robot_name
 logger = daiquiri.getLogger(__name__)
 
 
-async def make_request_headers(request: Request) -> tuple:
-    pt: PastaToken = await authenticate(request=request)
+async def make_request_headers(pasta_token: PastaToken, request: Request) -> list:
     headers = []
     for header in request.headers:
         if header.lower() == "cookie":
-            cookie = f"auth-token={pt.to_b64().decode('utf-8')}"
+            cookie = f"auth-token={pasta_token.to_b64().decode('utf-8')}"
             headers.append(("cookie", cookie))
         else:
             headers.append((header, request.headers.get(header)))
@@ -41,7 +40,7 @@ async def make_request_headers(request: Request) -> tuple:
     if rn is not None:
         headers.append(("Robot", rn))
     logger.debug(f"Request - {headers}")
-    return pt, headers
+    return headers
 
 
 def make_response_headers(pasta_token: PastaToken, response: Response) -> dict:
