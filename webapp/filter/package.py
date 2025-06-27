@@ -43,7 +43,7 @@ async def package_filter(request: Request, path: str):
         status = ex.args[1]
         msg = ex.args[0]
         logger.error(f"{status}: {msg}")
-        return fastapi.responses.PlainTextResponse(f"{status}: {msg}", status_code=status)
+        return fastapi.responses.PlainTextResponse(content=f"{status}: {msg}", status_code=status)
     req_headers = await make_request_headers(pasta_token, request)
     params = str(request.query_params)
     body = await request.body()
