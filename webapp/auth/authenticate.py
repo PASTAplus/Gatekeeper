@@ -35,32 +35,41 @@ from config import Config
 logger = daiquiri.getLogger(__name__)
 
 
-async def authenticate(request: Request) -> PastaToken:
-    pt = PastaToken()
+async def authenticate(request: Request) -> tuple:
+    pasta_token = PastaToken()
+    edi_token = None
+
+    # Old-style PASTA authentication
     if "authorization" in request.headers:
         basic_auth = request.headers["authorization"]
         external_token = await ldap_authenticate(basic_auth)
-        pt.from_auth_token(external_token)
-    else:
+        pasta_token.from_auth_token(external_token)
+    elif "cookie" in request.headers and request.cookies.get("auth-token"):
         external_token = request.cookies.get("auth-token")
-        if external_token is not None:
-            try:
-                pasta_crypto.verify_auth_token(Config.PUBLIC_KEY, external_token)
-            except InvalidCryptoKeyException:
-                raise
-            except InvalidTokenException as ex:
-                raise InvalidTokenException(ex, status.HTTP_400_BAD_REQUEST)
-            pt.from_auth_token(external_token)
-            if not pt.is_valid_ttl():
-                msg = f"Authentication token time-to-live has expired, condolences"
-                logger.error(msg)
-                raise ExpiredTokenException(msg, status.HTTP_401_UNAUTHORIZED)
-        else:
-            pt.uid = Config.PUBLIC
-            pt.system = Config.SYSTEM
-    msg = f"Authentication for user '{pt.to_string()}'"
-    logger.debug(msg)
-    return pt
+        try:
+            pasta_crypto.verify_auth_token(Config.PUBLIC_KEY, external_token)
+        except InvalidCryptoKeyException:
+            raise
+        except InvalidTokenException as ex:
+            raise InvalidTokenException(ex, status.HTTP_400_BAD_REQUEST)
+        pasta_token.from_auth_token(external_token)
+        if not pasta_token.is_valid_ttl():
+            msg = f"Authentication token time-to-live has expired, condolences"
+            logger.error(msg)
+            raise ExpiredTokenException(msg, status.HTTP_401_UNAUTHORIZED)
+    else:
+        pasta_token.uid = Config.PUBLIC
+        pasta_token.system = Config.SYSTEM
+    msg = f"Authentication for user: '{pasta_token.to_string()}'"
+    logger.info(msg)
+
+    # New-style EDI IAM authentication
+    if "cookie" in request.headers and request.cookies.get("edi-token"):
+        edi_token = request.cookies.get("edi-token")
+        msg = f"EDI Token '{edi_token}' exists"
+        logger.info(msg)
+
+    return pasta_token, edi_token
 
 
 async def ldap_authenticate(credentials: str) -> str:
