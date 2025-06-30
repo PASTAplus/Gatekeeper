@@ -27,13 +27,20 @@ from filter.robots import robot_name
 logger = daiquiri.getLogger(__name__)
 
 
-async def make_request_headers(pasta_token: PastaToken, request: Request) -> list:
+async def make_request_headers(pasta_token: PastaToken, edi_token: str, request: Request) -> list:
     headers = []
     for header in request.headers:
         if header.lower() != "cookie":
             headers.append((header, request.headers.get(header)))
+
+    # Add internal pasta authentication token
     cookie = f"auth-token={pasta_token.to_b64().decode('utf-8')}"
+
+    # Add new JWT token
+    if edi_token is not None:
+        cookie += f";edi-token={edi_token}"
     headers.append(("cookie", cookie))
+
     user_agent = request.headers.get("User-Agent")
     rn = robot_name(user_agent)
     if rn is not None:
