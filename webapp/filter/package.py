@@ -38,13 +38,13 @@ client = httpx.AsyncClient(base_url=Config.PACKAGE, timeout=Config.TIMEOUT)
 @router.head("/package/{path:path}")
 async def package_filter(request: Request, path: str):
     try:
-        pasta_token = await authenticate(request=request)
+        pasta_token, edi_token = await authenticate(request=request)
     except (AuthenticationException, ExpiredTokenException, InvalidTokenException) as ex:
         status = ex.args[1]
         msg = ex.args[0]
         logger.error(f"{status}: {msg}")
         return fastapi.responses.PlainTextResponse(content=f"{status}: {msg}", status_code=status)
-    req_headers = await make_request_headers(pasta_token, request)
+    req_headers = await make_request_headers(pasta_token, edi_token, request)
     params = str(request.query_params)
     body = await request.body()
     content = body.decode("utf-8")
