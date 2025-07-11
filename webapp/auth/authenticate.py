@@ -43,7 +43,7 @@ async def authenticate(request: Request) -> tuple:
     if "authorization" in request.headers:
         basic_auth = request.headers["authorization"]
         external_token = await ldap_authenticate(basic_auth)
-        pasta_token.from_auth_token(external_token)
+        pasta_token.from_auth_token(external_token)  # Make internal token
     elif "cookie" in request.headers and request.cookies.get("auth-token"):
         external_token = request.cookies.get("auth-token")
         try:
@@ -52,7 +52,7 @@ async def authenticate(request: Request) -> tuple:
             raise
         except InvalidTokenException as ex:
             raise InvalidTokenException(ex, status.HTTP_400_BAD_REQUEST)
-        pasta_token.from_auth_token(external_token)
+        pasta_token.from_auth_token(external_token)  # Make internal token
         if not pasta_token.is_valid_ttl():
             msg = f"Authentication token time-to-live has expired, condolences"
             logger.error(msg)
