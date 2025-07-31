@@ -7,6 +7,7 @@ dependencies:
   - uvicorn
   - python=3.12
   - pytest
+  - pytest-asyncio
   - httpx
   - black
   - fastapi
