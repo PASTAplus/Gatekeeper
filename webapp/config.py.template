@@ -22,6 +22,9 @@ class Config:
     LOG_PATH = pathlib.Path("<PATH TO PROJECT ROOT>")
     LOG_LEVEL = logging.WARN
 
+    # SSL CA
+    CA_FILE = None
+
     # PASTA+ authentication token attributes
     PUBLIC = "public"
     SYSTEM = "https://pasta.edirepository.org/authentication"
@@ -35,7 +38,8 @@ class Config:
 
     # EDI Authentication service
     AUTH = "AUTHENTICATION SERVICE ENDPOINT"
-    CA_FILE = None
+    AUTH_KEY = "PRIVATE_KEY"
+    PUBLIC_ID = "PUBLIC_ID"
 
     # Key attributes
     PUBLIC_KEY = "<PATH TO PROJECT ROOT>/keys/<PUBLIC KEY>"
