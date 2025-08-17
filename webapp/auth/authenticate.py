@@ -67,14 +67,17 @@ async def authenticate(request: Request) -> tuple:
     msg = f"Authentication for user: '{pasta_token.to_string()}'"
     logger.info(msg)
 
-    # New-style EDI IAM authentication
+    # EDI IAM authentication
     if "cookie" in request.headers and request.cookies.get("edi-token"):
         edi_token = request.cookies.get("edi-token")
         msg = f"EDI Token '{edi_token}' exists"
         logger.info(msg)
     elif is_public:
         iam = IAM()
-        edi_token = await iam.create_token(Config.PUBLIC_ID)
+        try:
+            edi_token = await iam.create_token(Config.PUBLIC_ID)
+        except httpx.HTTPError as ex:
+            logger.error(ex)
 
     return pasta_token, edi_token
 
