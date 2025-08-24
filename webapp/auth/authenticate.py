@@ -72,7 +72,7 @@ async def authenticate(request: Request) -> tuple:
         edi_token = request.cookies.get("edi-token")
         msg = f"EDI Token '{edi_token}' exists"
         logger.info(msg)
-    elif is_public:
+    else:  # EDI IAM is_public
         iam = IAM()
         try:
             edi_token = await iam.create_token(Config.PUBLIC_ID)
