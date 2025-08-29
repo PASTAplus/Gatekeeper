@@ -39,7 +39,6 @@ logger = daiquiri.getLogger(__name__)
 async def authenticate(request: Request) -> tuple:
     pasta_token = PastaToken()
     edi_token = None
-    is_public = False
 
     # Old-style PASTA authentication
     if "authorization" in request.headers:
@@ -62,7 +61,6 @@ async def authenticate(request: Request) -> tuple:
     else:
         pasta_token.uid = Config.PUBLIC
         pasta_token.system = Config.SYSTEM
-        is_public = True
 
     msg = f"Authentication for user: '{pasta_token.to_string()}'"
     logger.info(msg)
