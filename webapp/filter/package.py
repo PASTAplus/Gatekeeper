@@ -24,7 +24,6 @@ from auth.authenticate import authenticate
 from auth.exceptions import AuthenticationException, ExpiredTokenException, InvalidTokenException
 from config import Config
 from filter.headers import make_request_headers, make_response_headers
-from filter.paths import clean_path
 
 logger = daiquiri.getLogger(__name__)
 router = fastapi.APIRouter()
@@ -50,7 +49,7 @@ async def package_filter(request: Request, path: str):
     content = body.decode("utf-8")
     req = client.build_request(
         method=request.method,
-        url=clean_path(path),
+        url=path,
         headers=req_headers,
         params=params,
         content=content
