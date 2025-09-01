@@ -28,7 +28,7 @@ from filter.headers import make_request_headers, make_response_headers
 logger = daiquiri.getLogger(__name__)
 
 router = fastapi.APIRouter()
-client = httpx.AsyncClient(base_url=Config.AUDIT, timeout=Config.TIMEOUT)
+client = httpx.AsyncClient(timeout=Config.TIMEOUT)
 
 
 @router.get("/audit/{path:path}")
@@ -36,7 +36,7 @@ client = httpx.AsyncClient(base_url=Config.AUDIT, timeout=Config.TIMEOUT)
 @router.put("/audit/{path:path}")
 @router.delete("/audit/{path:path}")
 @router.head("/audit/{path:path}")
-async def audit_filter(request: Request, path: str):
+async def audit_filter(request: Request):
     try:
         pasta_token, edi_token = await authenticate(request=request)
     except (AuthenticationException, ExpiredTokenException, InvalidTokenException) as ex:
@@ -46,14 +46,17 @@ async def audit_filter(request: Request, path: str):
         return fastapi.responses.PlainTextResponse(content=f"{status}: {msg}", status_code=status)
     req_headers = await make_request_headers(pasta_token, edi_token, request)
     params = str(request.query_params)
-    body = await request.body()
-    content = body.decode("utf-8")
+    raw_path = request.scope.get('raw_path')
+    url = httpx.URL(path=Config.AUDIT).join(raw_path.decode("latin-1"))
+    async def request_body_iterator():
+        async for chunk in request.stream():
+            yield chunk
     req = client.build_request(
         method=request.method,
-        url=path,
+        url=url,
         headers=req_headers,
         params=params,
-        content=content
+        content=request_body_iterator()
     )
     try:
         response = await client.send(req, stream=True)
