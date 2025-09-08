@@ -14,4 +14,7 @@ dependencies:
   - pendulum
   - pycryptodome
   - gunicorn
+  - pip
+  - pip:
+      - git+https://github.com/PASTAplus/iam-lib
 prefix: /home/pasta/miniconda3/envs/gatekeeper

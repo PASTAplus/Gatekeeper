@@ -17,6 +17,8 @@ from pathlib import Path
 
 import daiquiri
 import httpx
+import iam_lib.token
+from iam_lib.api.edi_token import EdiTokenClient
 import ssl
 from starlette.requests import Request
 import starlette.status as status
@@ -38,9 +40,10 @@ logger = daiquiri.getLogger(__name__)
 
 async def authenticate(request: Request) -> tuple:
     pasta_token = PastaToken()
-    edi_token = None
+    auth_token = _get_token_from_cookie(request, "auth-token")
+    edi_token = _get_token_from_cookie(request, "edi-token")
 
-    # Old-style PASTA authentication
+    # PASTA authentication
     if "authorization" in request.headers:
         basic_auth = request.headers["authorization"]
         external_token = await ldap_authenticate(basic_auth)
@@ -111,3 +114,10 @@ async def ldap_authenticate(credentials: str) -> str:
         msg = f"Unrecognized error occurred - response status code {resp.status_code}"
     logger.error(msg)
     raise AuthenticationException(msg, resp.status_code)
+
+
+def _get_token_from_cookie(request: Request, token_name: str) -> str | None:
+    token = None
+    if token_name in request.cookies:
+        token = request.cookies[token_name]
+    return token
