@@ -60,7 +60,7 @@ async def audit_filter(request: Request):
     )
     try:
         response = await client.send(req, stream=True)
-        resp_headers = make_response_headers(pasta_token, response)
+        resp_headers = make_response_headers(pasta_token, edi_token, response)
         return StreamingResponse(
             content=response.aiter_raw(),
             background=BackgroundTask(response.aclose),

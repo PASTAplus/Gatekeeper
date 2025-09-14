@@ -37,9 +37,14 @@ class Config:
     AUDIT = f"<AUDIT HOST>"
 
     # EDI Authentication service
-    AUTH = "AUTHENTICATION SERVICE ENDPOINT"
-    AUTH_KEY = "PRIVATE_KEY"
-    PUBLIC_ID = "PUBLIC_ID"
+    AUTH_HOST = "AUTH_HOST"
+    AUTH_SCHEME = "AUTH_SCHEME"
+    AUTH = f"{AUTH_SCHEME}://{AUTH_HOST}"
+    AUTH_KEY = "AUTH_KEY"
+    PUBLIC_ID = "EDI-078e6e3cee4f7f2812f150701da9351acb51e089"
+    AUTH_PUBLIC_KEY = "AUTH_PUBLIC_KEY"
+    JWT_ALGORITHM = "ES256"
+    ACCEPT_TYPE = "json"
 
     # Key attributes
     PUBLIC_KEY = "<PATH TO PROJECT ROOT>/keys/<PUBLIC KEY>"

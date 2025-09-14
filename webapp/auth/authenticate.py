@@ -17,80 +17,74 @@ from pathlib import Path
 
 import daiquiri
 import httpx
-import iam_lib.token
 from iam_lib.api.edi_token import EdiTokenClient
+from iam_lib.exceptions import IAMResponseError, IAMInvalidToken
 import ssl
 from starlette.requests import Request
 import starlette.status as status
 
-from auth.exceptions import (
-    AuthenticationException,
-    ExpiredTokenException,
-    InvalidTokenException,
-    InvalidCryptoKeyException
-)
+from auth.exceptions import AuthenticationException, InvalidTokenException
 from auth.pasta_token import PastaToken
-import auth.pasta_crypto as pasta_crypto
 from config import Config
-from edi.iam import IAM
 
 
 logger = daiquiri.getLogger(__name__)
 
 
 async def authenticate(request: Request) -> tuple:
-    pasta_token = PastaToken()
     auth_token = _get_token_from_cookie(request, "auth-token")
     edi_token = _get_token_from_cookie(request, "edi-token")
 
-    # PASTA authentication
-    if "authorization" in request.headers:
-        basic_auth = request.headers["authorization"]
-        external_token = await ldap_authenticate(basic_auth)
-        pasta_token.from_auth_token(external_token)  # Make internal token
-    elif "cookie" in request.headers and request.cookies.get("auth-token"):
-        external_token = request.cookies.get("auth-token")
-        try:
-            pasta_crypto.verify_auth_token(Config.PUBLIC_KEY, external_token)
-        except InvalidCryptoKeyException:
-            raise
-        except InvalidTokenException as ex:
-            raise InvalidTokenException(ex, status.HTTP_400_BAD_REQUEST)
-        pasta_token.from_auth_token(external_token)  # Make internal token
-        if not pasta_token.is_valid_ttl():
-            msg = f"Authentication token time-to-live has expired, condolences"
-            logger.error(msg)
-            raise ExpiredTokenException(msg, status.HTTP_401_UNAUTHORIZED)
+    pasta_token = PastaToken()
+    edi_token_client = EdiTokenClient(
+        scheme=Config.AUTH_SCHEME,
+        host=Config.AUTH_HOST,
+        accept=Config.ACCEPT_TYPE,
+        public_key_path=Config.AUTH_PUBLIC_KEY,
+        algorithm=Config.JWT_ALGORITHM,
+        token=None,
+        truststore=Config.CA_FILE
+    )
+
+    if ((auth_token is None) and (edi_token is not None)) or ((auth_token is not None) and (edi_token is None)):
+        msg = "EDI token and PASTA token must be present together"
+        raise InvalidTokenException(msg, status.HTTP_400_BAD_REQUEST)
+    elif auth_token is None and edi_token is None:
+        if "authorization" in request.headers:
+            basic_auth = request.headers["authorization"]
+            auth_token, edi_token = await ldap_authenticate(basic_auth)
+            pasta_token.from_auth_token(auth_token)
+        else:
+            pasta_token.uid = Config.PUBLIC
+            pasta_token.system = Config.SYSTEM
+            edi_token_response = edi_token_client.create_token(profile_edi_identifier=Config.PUBLIC_ID, key=Config.AUTH_KEY)
+            edi_token = edi_token_response["token"]
     else:
-        pasta_token.uid = Config.PUBLIC
-        pasta_token.system = Config.SYSTEM
-
-    msg = f"Authentication for user: '{pasta_token.to_string()}'"
-    logger.info(msg)
-
-    # EDI IAM authentication
-    if "cookie" in request.headers and request.cookies.get("edi-token"):
-        edi_token = request.cookies.get("edi-token")
-        msg = f"EDI Token '{edi_token}' exists"
-        logger.info(msg)
-    else:  # EDI IAM is_public
-        iam = IAM()
         try:
-            edi_token = await iam.create_token(Config.PUBLIC_ID)
-        except httpx.HTTPError as ex:
+            edi_token_client.token = edi_token
+            edi_token_response = edi_token_client.refresh_token(auth_token=auth_token, edi_token=edi_token)
+            auth_token = edi_token_response["pasta-token"]
+            pasta_token.from_auth_token(auth_token)
+            edi_token = edi_token_response["edi-token"]
+        except (IAMInvalidToken, IAMResponseError) as ex:  # Reset edi-token and pasta-token to PUBLIC user
             logger.error(ex)
+            edi_token_client.token = None
+            edi_token_response = edi_token_client.create_token(profile_edi_identifier=Config.PUBLIC_ID, key=Config.AUTH_KEY)
+            edi_token = edi_token_response["token"]
+            pasta_token.uid = Config.PUBLIC
+            pasta_token.system = Config.SYSTEM
 
     return pasta_token, edi_token
 
 
-async def ldap_authenticate(credentials: str) -> str:
+async def ldap_authenticate(credentials: str) -> tuple:
     verify = True
     if Path(str(Config.CA_FILE)).exists() and Path(str(Config.CA_FILE)).is_file():
         # Create local SSL CA context if Config.CA_FILE is valid path
         verify = ssl.create_default_context(cafile=Config.CA_FILE)
     else:
         msg = f"Truststore file '{Config.CA_FILE}' does not exist"
-        logger.error(msg)
+        logger.warning(msg)
     client = httpx.AsyncClient(base_url=Config.AUTH, verify=verify)
     headers = {"authorization": credentials}
     path = "/auth/login/pasta"
@@ -103,7 +97,9 @@ async def ldap_authenticate(credentials: str) -> str:
         raise AuthenticationException(msg, status.HTTP_500_INTERNAL_SERVER_ERROR)
     if resp.status_code == status.HTTP_200_OK:
         cookies = resp.cookies
-        return cookies["auth-token"]
+        auth_token = cookies["auth-token"]
+        edi_token = cookies["edi-token"]
+        return auth_token, edi_token
     elif resp.status_code == status.HTTP_400_BAD_REQUEST:
         msg = "Basic Authorization header not sent in request"
     elif resp.status_code == status.HTTP_401_UNAUTHORIZED:
