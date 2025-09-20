@@ -36,6 +36,7 @@ client = httpx.AsyncClient(timeout=Config.TIMEOUT)
 @router.put("/audit/{path:path}")
 @router.delete("/audit/{path:path}")
 @router.head("/audit/{path:path}")
+@router.options("/audit/{path:path}")
 async def audit_filter(request: Request):
     try:
         pasta_token, edi_token = await authenticate(request=request)

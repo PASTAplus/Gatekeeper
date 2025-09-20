@@ -35,6 +35,7 @@ client = httpx.AsyncClient(timeout=Config.TIMEOUT)
 @router.put("/package/{path:path}")
 @router.delete("/package/{path:path}")
 @router.head("/package/{path:path}")
+@router.options("/package/{path:path}")
 async def package_filter(request: Request):
     try:
         pasta_token, edi_token = await authenticate(request=request)
