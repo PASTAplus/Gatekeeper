@@ -32,8 +32,12 @@ logger = daiquiri.getLogger(__name__)
 
 
 async def authenticate(request: Request) -> tuple:
-    auth_token = _get_token_from_cookie(request, "auth-token")
-    edi_token = _get_token_from_cookie(request, "edi-token")
+    if request.headers.get("X-New-Auth-Token") is None:
+        auth_token = _get_token_from_cookie(request, "auth-token")
+        edi_token = _get_token_from_cookie(request, "edi-token")
+    else:
+        auth_token = _get_token_from_x(request, "auth-token")
+        edi_token = _get_token_from_x(request, "edi-token")
 
     pasta_token = PastaToken()
     edi_token_client = EdiTokenClient(
@@ -116,4 +120,14 @@ def _get_token_from_cookie(request: Request, token_name: str) -> str | None:
     token = None
     if token_name in request.cookies:
         token = request.cookies[token_name]
+    return token
+
+def _get_token_from_x(request: Request, token_name: str) -> str | None:
+    token = None
+    x_new_auth_token = request.headers.get("X-New-Auth-Token")
+    tokens = x_new_auth_token.split(";")
+    for token in tokens:
+        if token_name in token:
+            token = token.removeprefix(token_name + "=")
+            break
     return token
