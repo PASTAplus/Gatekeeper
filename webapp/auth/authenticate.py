@@ -62,7 +62,7 @@ async def authenticate(request: Request) -> tuple:
             pasta_token.uid = Config.PUBLIC
             pasta_token.system = Config.SYSTEM
             edi_token_response = edi_token_client.create_token(profile_edi_identifier=Config.PUBLIC_ID, key=Config.AUTH_KEY)
-            edi_token = edi_token_response["token"]
+            edi_token = edi_token_response["edi-token"]
     else:
         try:
             edi_token_client.token = edi_token
@@ -74,7 +74,7 @@ async def authenticate(request: Request) -> tuple:
             logger.error(ex)
             edi_token_client.token = None
             edi_token_response = edi_token_client.create_token(profile_edi_identifier=Config.PUBLIC_ID, key=Config.AUTH_KEY)
-            edi_token = edi_token_response["token"]
+            edi_token = edi_token_response["edi-token"]
             pasta_token.uid = Config.PUBLIC
             pasta_token.system = Config.SYSTEM
 
@@ -121,6 +121,7 @@ def _get_token_from_cookie(request: Request, token_name: str) -> str | None:
     if token_name in request.cookies:
         token = request.cookies[token_name]
     return token
+
 
 def _get_token_from_x(request: Request, token_name: str) -> str | None:
     token = None
