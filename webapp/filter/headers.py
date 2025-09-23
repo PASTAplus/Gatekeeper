@@ -17,6 +17,7 @@ import daiquiri
 from httpx import Response
 from iam_lib.token import Token
 from starlette.requests import Request
+from starlette.responses import StreamingResponse
 
 from auth.pasta_crypto import create_authtoken
 from auth.pasta_token import PastaToken
@@ -46,14 +47,14 @@ async def make_request_headers(pasta_token: PastaToken, edi_token: str, request:
     return headers
 
 
-def make_response_headers(pasta_token: PastaToken, edi_token: str, response: Response) -> dict:
-    headers = response.headers
+def make_response_headers(pasta_token: PastaToken, edi_token: str, streaming_response: StreamingResponse) -> StreamingResponse:
     token = Token(edi_token)
     auth_token = create_authtoken(Config.PRIVATE_KEY, pasta_token.to_string())
-    set_cookie = f"auth-token={auth_token};edi-token={edi_token}"
+    max_age = None
     if token.subject == Config.PUBLIC_ID:
-        set_cookie += "; Max-Age=0"
-    headers["set-cookie"] = set_cookie
-    logger.debug(f"Response - {headers}")
-    return headers
+        max_age = 0
+    streaming_response.set_cookie(key="auth-token", value=auth_token, max_age=max_age, httponly=True)
+    streaming_response.set_cookie(key="edi-token", value=edi_token, max_age=max_age, httponly=True)
+
+    return streaming_response
 

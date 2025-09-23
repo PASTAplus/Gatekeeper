@@ -26,7 +26,6 @@ from config import Config
 from filter.headers import make_request_headers, make_response_headers
 
 logger = daiquiri.getLogger(__name__)
-
 router = fastapi.APIRouter()
 client = httpx.AsyncClient(timeout=Config.TIMEOUT)
 
@@ -61,13 +60,14 @@ async def audit_filter(request: Request):
     )
     try:
         response = await client.send(req, stream=True)
-        resp_headers = make_response_headers(pasta_token, edi_token, response)
-        return StreamingResponse(
+        streaming_response =  StreamingResponse(
             content=response.aiter_raw(),
             background=BackgroundTask(response.aclose),
-            headers=resp_headers,
+            headers=response.headers,
             status_code=response.status_code
         )
+        streaming_response = make_response_headers(pasta_token, edi_token, streaming_response)
+        return streaming_response
     except httpx.HTTPError as ex:
         logger.error(ex)
         raise ex
